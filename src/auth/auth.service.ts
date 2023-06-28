@@ -7,10 +7,14 @@ import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { Prisma } from '@prisma/client';
 import { error } from 'console';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
   async signin(dto) {
     const user =
       await this.prisma.user.findUnique({
@@ -30,7 +34,16 @@ export class AuthService {
         )
       ) {
         delete user.hash;
-        return user;
+        const payload = {
+          sub: user.id,
+          username: user.email,
+        };
+        return {
+          access_token:
+            await this.jwtService.signAsync(
+              payload,
+            ),
+        };
       } else {
         return `Incorrect Password`;
       }
@@ -49,6 +62,8 @@ export class AuthService {
         data: {
           email: dto.email,
           hash,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
         },
       });
       delete user.hash;
