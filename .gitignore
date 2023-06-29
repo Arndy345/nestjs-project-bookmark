@@ -2,7 +2,7 @@
 /dist
 /node_modules
 .env
-
+.env.test
 /src/auth/auth.constants.ts
 # Logs
 logs
