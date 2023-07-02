@@ -2,6 +2,7 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
+  IsOptional,
 } from 'class-validator';
 
 export class AuthDto {
@@ -12,12 +13,12 @@ export class AuthDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
   @IsString()
+  @IsOptional()
   firstName?: string;
+
   @IsString()
+  @IsOptional()
   lastName?: string;
 }
-
-
-
-
