@@ -115,6 +115,7 @@ describe('App e2e', () => {
     });
   });
   describe('Bookmark', () => {
+    let bookmarkId = 2;
     let token = 'hey';
     beforeAll(async () => {
       return request(app.getHttpServer())
@@ -134,9 +135,13 @@ describe('App e2e', () => {
         link: 'github.com',
       };
       return request(app.getHttpServer())
-        .get('/users/me')
+        .post('/bookmarks/')
         .set('Authorization', `Bearer ${token}`)
-        .expect(200);
+        .send(dto)
+        .expect(201)
+        .then((data) => {
+          bookmarkId = data.body.id;
+        });
     });
     it('/POST should return error when user is not authenticated', () => {
       const dto: BookmarkDto = {
@@ -145,8 +150,9 @@ describe('App e2e', () => {
         link: 'github.com',
       };
       return request(app.getHttpServer())
-        .get('/users/me')
+        .get('/bookmarks')
         .set('Authorization', `Bearer token`)
+        .send(dto)
         .expect(401);
     });
     it('/GET bookmark', () => {
@@ -157,9 +163,15 @@ describe('App e2e', () => {
     });
     it('/GET bookmark by id', () => {
       return request(app.getHttpServer())
-        .get('/bookmarks/1')
+        .get(`/bookmarks/${bookmarkId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
+    });
+    it('/GET bookmark by id fails when wrong ID is passed', () => {
+      return request(app.getHttpServer())
+        .get(`/bookmarks/10`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(403);
     });
     it('/PATCH updates bookmark details', () => {
       const dto: EditBookmarkDto = {
@@ -168,16 +180,28 @@ describe('App e2e', () => {
         link: 'github.com',
       };
       return request(app.getHttpServer())
-        .patch('/bookmarks/1')
+        .patch(`/bookmarks/${bookmarkId}`)
         .set('Authorization', `Bearer ${token}`)
         .send(dto)
         .expect(200);
     });
     it('/DELETE bookmark', () => {
       return request(app.getHttpServer())
-        .delete('/bookmarks/1')
+        .delete(`/bookmarks/${bookmarkId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
+    });
+    it('/GET should return empty bookmark after deleting', async () => {
+      const response = await request(
+        app.getHttpServer(),
+      )
+        .get('/bookmarks/')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      expect(response.body.length).toStrictEqual(
+        0,
+      );
     });
   });
   describe('User', () => {

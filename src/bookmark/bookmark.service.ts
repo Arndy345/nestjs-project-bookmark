@@ -15,7 +15,7 @@ export class BookmarkService {
     if (bookmarks) {
       return bookmarks;
     }
-    return 'No bookmarks yet';
+    return 'No bookmarks';
   }
 
   async createBookmark(id, dto) {
