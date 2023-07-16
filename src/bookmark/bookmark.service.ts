@@ -8,7 +8,10 @@ export class BookmarkService {
       await this.prisma.bookmark.findMany({
         where: { userId },
       });
-    return bookmarks;
+    if (bookmarks) {
+      return bookmarks;
+    }
+    return 'No bookmarks yet';
   }
 
   async createBookmark(id, dto) {
@@ -22,7 +25,7 @@ export class BookmarkService {
     if (bookmarks) {
       return bookmarks;
     }
-    return 'No bookmarks';
+    return 'Error 400';
   }
 
   async getBookmarkById(userId, bookmarkId) {
@@ -85,10 +88,11 @@ export class BookmarkService {
       return 'Resource not found';
     }
 
-    return await this.prisma.bookmark.delete({
+    await this.prisma.bookmark.delete({
       where: {
         id: bookmarkId,
       },
     });
+    return 'Deleted Succesfully';
   }
 }

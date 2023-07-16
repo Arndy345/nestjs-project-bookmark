@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '../auth';
 import { BookmarkService } from './bookmark.service';
-import { GetUser } from 'src/auth/decorators';
+import { GetUser } from '../auth/decorators';
 import {
   BookmarkDto,
   EditBookmarkDto,
