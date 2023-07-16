@@ -31,4 +31,5 @@ model Bookmark {
   user        User     @relation(fields: [userId], references: [id])
 
   @@map("bookmarks")
+  // @@unique(fields: [userId, id], name: "userIdentifier")
 }

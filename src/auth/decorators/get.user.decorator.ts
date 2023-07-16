@@ -4,7 +4,10 @@ import {
 } from '@nestjs/common';
 
 export const GetUser = createParamDecorator(
-  (data: string | undefined, ctx: ExecutionContext) => {
+  (
+    data: string | number,
+    ctx: ExecutionContext,
+  ) => {
     const request = ctx
       .switchToHttp()
       .getRequest();
