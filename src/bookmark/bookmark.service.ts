@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma';
 @Injectable()
 export class BookmarkService {
@@ -25,7 +29,9 @@ export class BookmarkService {
     if (bookmarks) {
       return bookmarks;
     }
-    return 'Error 400';
+    throw new InternalServerErrorException(
+      'Internal Server Error',
+    );
   }
 
   async getBookmarkById(userId, bookmarkId) {
@@ -39,7 +45,9 @@ export class BookmarkService {
     if (bookmark) {
       return bookmark;
     }
-    return 'Bookmark not found';
+    throw new ForbiddenException(
+      'Resource not found',
+    );
   }
 
   async editBookmarkById(
@@ -65,7 +73,9 @@ export class BookmarkService {
       });
 
     if (!bookmark || bookmark.userId !== userId) {
-      return 'Resource not found';
+      throw new ForbiddenException(
+        'Resource not found',
+      );
     }
 
     return await this.prisma.bookmark.update({
@@ -85,7 +95,9 @@ export class BookmarkService {
       });
 
     if (!bookmark || bookmark.userId !== userId) {
-      return 'Resource not found';
+      throw new ForbiddenException(
+        'Resource not found',
+      );
     }
 
     await this.prisma.bookmark.delete({
